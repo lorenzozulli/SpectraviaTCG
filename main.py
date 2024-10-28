@@ -11,18 +11,20 @@ pygame.display.set_caption("Client")
 clientNumber = 0
 
 def redrawWindow():
-    run = True
-    while run:
-        screen.fill((255,255,255))
-        pygame.display.update()
+    screen.fill((255,255,255))
+    pygame.display.update()
 
 
 def main():
     run = True
+    clock = pygame.time.Clock()
     while run:
+        clock.tick(60)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
         redrawWindow()
+
+main()
                 
