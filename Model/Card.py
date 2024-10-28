@@ -1,5 +1,6 @@
 class Card(object):
-    def __init__(self, identifier, expansion, name, cost, ad, hp, ms, attack_type, faction, card_class, race, effect):
+    def __init__(self, image, identifier, expansion, name, cost, ad, hp, ms, attack_type, faction, card_class, race, effect):
+        self.image = image
         self.identifier = identifier
         self.expansion = expansion
         self.name = name

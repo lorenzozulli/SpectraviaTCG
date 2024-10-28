@@ -1,4 +1,5 @@
 import pygame
+from Model.Network import Network
 
 pygame.init()
 
@@ -7,6 +8,7 @@ SCREEN_HEIGHT = 768
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Client")
+# Quando avro' un icona pygame.display.set_icon("")
 
 clientNumber = 0
 
@@ -17,6 +19,7 @@ def redrawWindow():
 
 def main():
     run = True
+    n = Network()
     clock = pygame.time.Clock()
     while run:
         clock.tick(60)
