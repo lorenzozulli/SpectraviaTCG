@@ -1,4 +1,5 @@
 import pygame
+import random
 from Model.Network import Network
 from View.Button import Button
 
@@ -31,7 +32,18 @@ multiplayer_btn = Button(128, 128, multiplayer_img, 1)
 deckEditor_btn = Button(128, 234, deckEditor_img, 1)
 settings_btn = Button(128, 340, settings_img, 1)
 
+# load spectravia logo
+game_logo = pygame.image.load("Assets/Other/spectravia_text.png")
+
 clientNumber = 0
+
+def randomizeCharacter():
+    r = random.randint(1, 3)
+    character_img = pygame.image.load("Assets/Other/character_" + str(r) + ".jpg")
+    character_img = pygame.transform.scale(character_img, (500, 500))
+    return character_img
+
+character = randomizeCharacter()
 
 def redrawWindow():
     screen.fill((0,0,0))
@@ -39,6 +51,9 @@ def redrawWindow():
     multiplayer_btn.draw(screen)
     deckEditor_btn.draw(screen)
     settings_btn.draw(screen)
+
+    screen.blit(game_logo, (800, 128))
+    screen.blit(character, (800, 268))
     
     pygame.display.update()
 
