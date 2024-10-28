@@ -15,16 +15,13 @@ class EditCards(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(800, 600)
-        self.widget = QtWidgets.QWidget(Form)
-        self.widget.setGeometry(QtCore.QRect(30, 40, 731, 521))
-        self.widget.setObjectName("widget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.lineEdit = QtWidgets.QLineEdit(self.widget)
-        self.lineEdit.setObjectName("lineEdit")
-        self.verticalLayout.addWidget(self.lineEdit)
-        self.tableWidget = QtWidgets.QTableWidget(self.widget)
+        self.layoutWidget = QtWidgets.QWidget(Form)
+        self.layoutWidget.setGeometry(QtCore.QRect(30, 40, 731, 521))
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.layoutWidget)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout.setObjectName("gridLayout")
+        self.tableWidget = QtWidgets.QTableWidget(self.layoutWidget)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(6)
         self.tableWidget.setRowCount(0)
@@ -40,7 +37,13 @@ class EditCards(object):
         self.tableWidget.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(5, item)
-        self.verticalLayout.addWidget(self.tableWidget)
+        self.gridLayout.addWidget(self.tableWidget, 2, 0, 1, 2)
+        self.addButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.addButton.setObjectName("addButton")
+        self.gridLayout.addWidget(self.addButton, 0, 1, 1, 1)
+        self.lineEdit = QtWidgets.QLineEdit(self.layoutWidget)
+        self.lineEdit.setObjectName("lineEdit")
+        self.gridLayout.addWidget(self.lineEdit, 0, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -48,6 +51,7 @@ class EditCards(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
+        self.lineEdit.setPlaceholderText(_translate("Form", "Search Here..."))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("Form", "ID"))
         item = self.tableWidget.horizontalHeaderItem(1)
@@ -60,3 +64,14 @@ class EditCards(object):
         item.setText(_translate("Form", "Faction"))
         item = self.tableWidget.horizontalHeaderItem(5)
         item.setText(_translate("Form", "View"))
+        self.addButton.setText(_translate("Form", "Add a Card"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())
