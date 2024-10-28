@@ -10,7 +10,7 @@ SCREEN_HEIGHT = 768
 
 # game window
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Client")
+pygame.display.set_caption("SPECTRAVIA TCG SIM")
 # Quando avro' un icona pygame.display.set_icon("")
 bg_image = pygame.image.load("Assets/background.jpg")
 bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
