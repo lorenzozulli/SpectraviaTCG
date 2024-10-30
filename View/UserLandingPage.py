@@ -1,7 +1,9 @@
 import pygame
 import random
+
 from Model.Network import Network
 from View.Button import Button
+from View.LineEdit import LineEdit
 
 pygame.init()
 
@@ -16,6 +18,7 @@ bg_image = pygame.image.load("Assets/background.jpg")
 bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # game variables
+menuState = "main"
 
 # define fonts
 font = pygame.font.SysFont("arialblack", 40)
@@ -32,6 +35,9 @@ multiplayer_btn = Button(128, 128, multiplayer_img, 1)
 deckEditor_btn = Button(128, 234, deckEditor_img, 1)
 settings_btn = Button(128, 340, settings_img, 1)
 
+# load lineEdit
+nameEdit = LineEdit(128, 550, 396, 40)
+
 # load spectravia logo
 game_logo = pygame.image.load("Assets/Other/spectravia_text.png")
 
@@ -45,16 +51,36 @@ def randomizeCharacter():
 
 character = randomizeCharacter()
 
-def redrawWindow():
+def redrawWindow(menuState):
     screen.fill((0,0,0))
     screen.blit(bg_image, (0,0))
-    multiplayer_btn.draw(screen)
-    deckEditor_btn.draw(screen)
-    settings_btn.draw(screen)
 
-    screen.blit(game_logo, (800, 128))
-    screen.blit(character, (800, 268))
-    
+    if multiplayer_btn.draw(screen):
+        menuState = "multiplayer"
+    elif deckEditor_btn.draw(screen):
+        menuState = "deckEditor"
+    elif settings_btn.draw(screen):
+        menuState = "settings"
+
+    match menuState:
+        case "main":
+            multiplayer_btn.draw(screen)
+            deckEditor_btn.draw(screen)
+            settings_btn.draw(screen)
+
+            screen.blit(game_logo, (800, 128))
+            screen.blit(character, (800, 268))
+
+            nameEdit.update()
+            nameEdit.draw(screen)
+            
+        case "multiplayer":
+            pass
+        case "deckEditor":
+            pass
+        case "settings":
+            pass
+
     pygame.display.update()
 
 def gameLoop():
@@ -64,13 +90,14 @@ def gameLoop():
     clock = pygame.time.Clock()
     while run:
         clock.tick(60)
-
-
+        
         #event handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-        redrawWindow()
+
+            nameEdit.handle_event(event)
+        redrawWindow(menuState)
 
                 
