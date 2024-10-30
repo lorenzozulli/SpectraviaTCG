@@ -51,6 +51,10 @@ def randomizeCharacter():
 
 character = randomizeCharacter()
 
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x,y))
+
 def redrawWindow(menuState):
     screen.fill((0,0,0))
     screen.blit(bg_image, (0,0))
@@ -79,7 +83,7 @@ def redrawWindow(menuState):
         case "deckEditor":
             pass
         case "settings":
-            pass
+            draw_text("settings", font, TEXT_COL, 160, 250)
 
     pygame.display.update()
 
