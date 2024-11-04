@@ -8,11 +8,14 @@ from View.LineEdit import LineEdit
 
 pygame.init()
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+info = pygame.display.Info()
+
+SCREEN_WIDTH = info.current_w
+SCREEN_HEIGHT = info.current_h
 
 # game window
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
 pygame.display.set_caption("SPECTRAVIA TCG SIM")
 # Quando avro' un icona: pygame.display.set_icon("")
 bg_image = pygame.image.load("Assets/background.jpg")
@@ -24,16 +27,19 @@ font = pygame.font.SysFont("arialblack", 40)
 # define colors
 TEXT_COL = (255,255,255)
 
+
 # load buttons
 multiplayer_img = pygame.image.load("Assets/Other/multiplayer.png").convert_alpha()
 deckEditor_img = pygame.image.load("Assets/Other/deck_editor.png").convert_alpha()
 settings_img = pygame.image.load("Assets/Other/settings.png").convert_alpha()
 back_img = pygame.image.load("Assets/Other/back.png").convert_alpha()
+quit_img = pygame.image.load("Assets/Other/quit.png").convert_alpha()
 
 multiplayer_btn = Button(100, 128, multiplayer_img, 1)
 deckEditor_btn = Button(100, 234, deckEditor_img, 1)
 settings_btn = Button(100, 340, settings_img, 1)
 back_btn = Button(100, 550, back_img, 1)
+quit_btn = Button(100, 700, quit_img, 1)
 
 # load lineEdit
 nameEdit = LineEdit(100, 550, 396, 40)
@@ -82,6 +88,10 @@ def gameLoop():
 
                 nameEdit.update()
                 nameEdit.draw(screen)
+
+                if quit_btn.draw(screen):
+                    run = False
+
             case "multiplayer":
                 draw_text("multiplayer", font, TEXT_COL, 160, 250)
 
