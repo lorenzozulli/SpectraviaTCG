@@ -17,23 +17,22 @@ pygame.display.set_caption("SPECTRAVIA TCG SIM")
 bg_image = pygame.image.load("Assets/background.jpg")
 bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# game variables
-menuState = "main"
-
 # define fonts
 font = pygame.font.SysFont("arialblack", 40)
 
 # define colors
 TEXT_COL = (255,255,255)
 
-# load button images
+# load buttons
 multiplayer_img = pygame.image.load("Assets/Other/multiplayer.png").convert_alpha()
 deckEditor_img = pygame.image.load("Assets/Other/deck_editor.png").convert_alpha()
 settings_img = pygame.image.load("Assets/Other/settings.png").convert_alpha()
+back_img = pygame.image.load("Assets/Other/back.png").convert_alpha()
 
 multiplayer_btn = Button(128, 128, multiplayer_img, 1)
 deckEditor_btn = Button(128, 234, deckEditor_img, 1)
 settings_btn = Button(128, 340, settings_img, 1)
+back_btn = Button(128, 550, back_img, 1)
 
 # load lineEdit
 nameEdit = LineEdit(128, 550, 396, 40)
@@ -55,46 +54,50 @@ def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x,y))
 
-def redrawWindow(menuState):
-    screen.fill((0,0,0))
-    screen.blit(bg_image, (0,0))
-
-    if multiplayer_btn.draw(screen):
-        menuState = "multiplayer"
-    elif deckEditor_btn.draw(screen):
-        menuState = "deckEditor"
-    elif settings_btn.draw(screen):
-        menuState = "settings"
-
-    match menuState:
-        case "main":
-            multiplayer_btn.draw(screen)
-            deckEditor_btn.draw(screen)
-            settings_btn.draw(screen)
-
-            screen.blit(game_logo, (800, 128))
-            screen.blit(character, (800, 268))
-
-            nameEdit.update()
-            nameEdit.draw(screen)
-            
-        case "multiplayer":
-            pass
-        case "deckEditor":
-            pass
-        case "settings":
-            draw_text("settings", font, TEXT_COL, 160, 250)
-
-    pygame.display.update()
-
 def gameLoop():
-    # game loop
     run = True
     n = Network()
     clock = pygame.time.Clock()
+    menuState = "main"
     while run:
         clock.tick(60)
-        
+
+        screen.fill((0,0,0))
+        screen.blit(bg_image, (0,0))
+
+        match menuState:
+            case "main":
+                if multiplayer_btn.draw(screen):
+                    menuState = "multiplayer"
+                elif deckEditor_btn.draw(screen):
+                    menuState = "deckEditor"
+                elif settings_btn.draw(screen):
+                    menuState = "settings"
+                
+                screen.blit(game_logo, (800, 128))
+                screen.blit(character, (800, 268))
+
+                nameEdit.update()
+                nameEdit.draw(screen)
+            case "multiplayer":
+                draw_text("multiplayer", font, TEXT_COL, 160, 250)
+
+                if back_btn.draw(screen):
+                    menuState = "main"
+            case "deckEditor":
+                draw_text("deck editor", font, TEXT_COL, 160, 250)
+
+                if back_btn.draw(screen):
+                    menuState = "main"
+            case "settings":
+                draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, 160, 250)
+
+                screen.blit(game_logo, (800, 128))
+                screen.blit(character, (800, 268))
+                
+                if back_btn.draw(screen):
+                    menuState = "main"
+                
         #event handler
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -102,6 +105,5 @@ def gameLoop():
                 pygame.quit()
 
             nameEdit.handle_event(event)
-        redrawWindow(menuState)
-
+        pygame.display.update() 
                 
