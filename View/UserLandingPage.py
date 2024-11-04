@@ -1,5 +1,6 @@
 import pygame
 import random
+import os
 
 from Model.Network import Network
 from View.Button import Button
@@ -43,8 +44,10 @@ game_logo = pygame.image.load("Assets/Other/spectravia_text.png")
 clientNumber = 0
 
 def randomizeCharacter():
-    r = random.randint(1, 3)
-    character_img = pygame.image.load("Assets/Other/character_" + str(r) + ".jpg")
+    folder = "Assets/Other/Characters"
+    fileNumber = len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
+    r = random.randint(1, fileNumber)
+    character_img = pygame.image.load("Assets/Other/Characters/character_" + str(r) + ".jpg")
     character_img = pygame.transform.scale(character_img, (500, 500))
     return character_img
 
