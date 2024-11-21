@@ -1,9 +1,10 @@
 import pygame
+from Model.Player import Player
 
 class LineEdit(object):
     def __init__(self, x, y, width, height, font_size=30, text_color=(0, 0, 0), bg_color=(255, 255, 255)):
         self.rect = pygame.Rect(x, y, width, height)
-        self.text = "Your name here..."
+        self.text = Player.randomizeName()
         self.font = pygame.font.Font(None, font_size)
         self.text_color = text_color
         self.bg_color = bg_color

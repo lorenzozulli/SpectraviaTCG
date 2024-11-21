@@ -3,6 +3,7 @@ import random
 import os
 
 from Model.Network import Network
+from Model.Player import Player
 from View.Button import Button
 from View.LineEdit import LineEdit
 
@@ -50,7 +51,7 @@ back_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, back_img, 1)
 quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
 
 # load lineEdit
-nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 396, 40)
+nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT)
 
 # load spectravia logo
 game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
@@ -62,7 +63,7 @@ def randomizeCharacter():
     fileNumber = len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
     r = random.randint(1, fileNumber)
     character_img = pygame.image.load("Assets/Other/Characters/character_" + str(r) + ".jpg")
-    character_img = pygame.transform.scale(character_img, (SCREEN_WIDTH/5, SCREEN_WIDTH/5))
+    character_img = pygame.transform.scale(character_img, (10*CELL_WIDTH, 10*CELL_WIDTH))
     return character_img
 
 character = randomizeCharacter()
@@ -91,8 +92,8 @@ def gameLoop():
                 elif settings_btn.draw(screen):
                     menuState = "settings"
                 
-                screen.blit(game_logo, (800, 128))
-                screen.blit(character, (SCREEN_WIDTH/9, SCREEN_HEIGHT/9))
+                screen.blit(game_logo, (20*CELL_WIDTH, 3*CELL_HEIGHT))
+                screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
 
                 nameEdit.update()
                 nameEdit.draw(screen)
