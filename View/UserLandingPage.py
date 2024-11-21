@@ -22,10 +22,13 @@ GRID_HEIGHT = 18
 CELL_WIDTH = SCREEN_WIDTH/GRID_WIDTH
 CELL_HEIGHT = SCREEN_HEIGHT/GRID_HEIGHT
 
-print(SCREEN_WIDTH, SCREEN_HEIGHT, CELL_WIDTH, CELL_HEIGHT)
+fullscreen = True
 
 # game window
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
+if fullscreen == True:
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
+else:
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("SPECTRAVIA TCG SIM")
 # Quando avro' un icona: pygame.display.set_icon("")
 bg_image = pygame.image.load("Assets/background.jpg")
@@ -37,7 +40,6 @@ font = pygame.font.SysFont("arialblack", 40)
 # define colors
 TEXT_COL = (255,255,255)
 
-
 # load buttons
 multiplayer_img = pygame.image.load("Assets/Other/Buttons/multiplayer.png").convert_alpha()
 deckEditor_img = pygame.image.load("Assets/Other/Buttons/deck_editor.png").convert_alpha()
@@ -48,11 +50,14 @@ quit_img = pygame.image.load("Assets/Other/Buttons/quit.png").convert_alpha()
 multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, multiplayer_img, 1)
 deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, deckEditor_img, 1)
 settings_btn = Button(CELL_WIDTH, 8*CELL_HEIGHT, settings_img, 1)
-back_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, back_img, 1)
+back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, back_img, 1)
 quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
 
 # load lineEdit
 nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT)
+
+# load fullscreen Checkbox
+fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
 
 # load spectravia logo
 game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
@@ -122,9 +127,7 @@ def gameLoop():
             case "settings":
                 draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
 
-                checkbox = Checkbox(50,50,30)
-
-                screen.blit(checkbox, (CELL_WIDTH, 4*CELL_HEIGHT))
+                fullscreenCheckbox.draw(screen)
 
                 screen.blit(game_logo, (20*CELL_WIDTH, 3*CELL_HEIGHT))
                 screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
@@ -139,5 +142,12 @@ def gameLoop():
                 pygame.quit()
 
             nameEdit.handle_event(event)
+            fullscreenCheckbox.handle_event(event)
+
+            if fullscreen == True:
+                fullscreenCheckbox.checked = True
+            if fullscreen == False:
+                fullscreenCheckbox.checked = False
+            
         pygame.display.update() 
                 
