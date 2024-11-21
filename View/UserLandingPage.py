@@ -5,6 +5,7 @@ import os
 from Model.Network import Network
 from Model.Player import Player
 from View.Button import Button
+from View.Checkbox import Checkbox
 from View.LineEdit import LineEdit
 
 pygame.init()
@@ -119,10 +120,14 @@ def gameLoop():
                 if back_btn.draw(screen):
                     menuState = "main"
             case "settings":
-                draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, 160, 250)
+                draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
 
-                screen.blit(game_logo, (800, 128))
-                screen.blit(character, (800, 268))
+                checkbox = Checkbox(50,50,30)
+
+                screen.blit(checkbox, (CELL_WIDTH, 4*CELL_HEIGHT))
+
+                screen.blit(game_logo, (20*CELL_WIDTH, 3*CELL_HEIGHT))
+                screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
                 
                 if back_btn.draw(screen):
                     menuState = "main"
