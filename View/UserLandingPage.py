@@ -14,6 +14,14 @@ info = pygame.display.Info()
 SCREEN_WIDTH = info.current_w
 SCREEN_HEIGHT = info.current_h
 
+GRID_WIDTH = 32
+GRID_HEIGHT = 18
+
+CELL_WIDTH = SCREEN_WIDTH/GRID_WIDTH
+CELL_HEIGHT = SCREEN_HEIGHT/GRID_HEIGHT
+
+print(SCREEN_WIDTH, SCREEN_HEIGHT, CELL_WIDTH, CELL_HEIGHT)
+
 # game window
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
 pygame.display.set_caption("SPECTRAVIA TCG SIM")
@@ -29,23 +37,23 @@ TEXT_COL = (255,255,255)
 
 
 # load buttons
-multiplayer_img = pygame.image.load("Assets/Other/multiplayer.png").convert_alpha()
-deckEditor_img = pygame.image.load("Assets/Other/deck_editor.png").convert_alpha()
-settings_img = pygame.image.load("Assets/Other/settings.png").convert_alpha()
-back_img = pygame.image.load("Assets/Other/back.png").convert_alpha()
-quit_img = pygame.image.load("Assets/Other/quit.png").convert_alpha()
+multiplayer_img = pygame.image.load("Assets/Other/Buttons/multiplayer.png").convert_alpha()
+deckEditor_img = pygame.image.load("Assets/Other/Buttons/deck_editor.png").convert_alpha()
+settings_img = pygame.image.load("Assets/Other/Buttons/settings.png").convert_alpha()
+back_img = pygame.image.load("Assets/Other/Buttons/back.png").convert_alpha()
+quit_img = pygame.image.load("Assets/Other/Buttons/quit.png").convert_alpha()
 
-multiplayer_btn = Button(100, 128, multiplayer_img, 1)
-deckEditor_btn = Button(100, 234, deckEditor_img, 1)
-settings_btn = Button(100, 340, settings_img, 1)
-back_btn = Button(100, 550, back_img, 1)
-quit_btn = Button(100, 700, quit_img, 1)
+multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, multiplayer_img, 1)
+deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, deckEditor_img, 1)
+settings_btn = Button(CELL_WIDTH, 8*CELL_HEIGHT, settings_img, 1)
+back_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, back_img, 1)
+quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
 
 # load lineEdit
-nameEdit = LineEdit(100, 550, 396, 40)
+nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 396, 40)
 
 # load spectravia logo
-game_logo = pygame.image.load("Assets/Other/spectravia_text.png")
+game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
 
 clientNumber = 0
 
@@ -54,7 +62,7 @@ def randomizeCharacter():
     fileNumber = len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
     r = random.randint(1, fileNumber)
     character_img = pygame.image.load("Assets/Other/Characters/character_" + str(r) + ".jpg")
-    character_img = pygame.transform.scale(character_img, (400, 400))
+    character_img = pygame.transform.scale(character_img, (SCREEN_WIDTH/5, SCREEN_WIDTH/5))
     return character_img
 
 character = randomizeCharacter()
@@ -84,7 +92,7 @@ def gameLoop():
                     menuState = "settings"
                 
                 screen.blit(game_logo, (800, 128))
-                screen.blit(character, (800, 268))
+                screen.blit(character, (SCREEN_WIDTH/9, SCREEN_HEIGHT/9))
 
                 nameEdit.update()
                 nameEdit.draw(screen)
