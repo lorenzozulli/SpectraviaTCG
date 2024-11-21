@@ -25,10 +25,12 @@ CELL_HEIGHT = SCREEN_HEIGHT/GRID_HEIGHT
 fullscreen = True
 
 # game window
-if fullscreen == True:
+if fullscreen:
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
 else:
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+
+
 pygame.display.set_caption("SPECTRAVIA TCG SIM")
 # Quando avro' un icona: pygame.display.set_icon("")
 bg_image = pygame.image.load("Assets/background.jpg")
@@ -144,10 +146,5 @@ def gameLoop():
             nameEdit.handle_event(event)
             fullscreenCheckbox.handle_event(event)
 
-            if fullscreen == True:
-                fullscreenCheckbox.checked = True
-            if fullscreen == False:
-                fullscreenCheckbox.checked = False
-            
         pygame.display.update() 
                 
