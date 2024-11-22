@@ -34,8 +34,12 @@ def refreshWindow(fullscreen):
 
 screen = refreshWindow(fullscreen)
 
+
+# Caption and game icon
 pygame.display.set_caption("SPECTRAVIA TCG SIM")
 # Quando avro' un icona: pygame.display.set_icon("")
+
+# BG image load and scale
 bg_image = pygame.image.load("Assets/background.jpg")
 bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -59,13 +63,13 @@ back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, back_img, 1)
 quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
 
 # load lineEdit
-nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT)
+nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT, 48)
 
 # load fullscreen Checkbox
 fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
 
 # load resolution dropdown menu
-resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 200, 40, font, ["1366x768", "1920x1080"])
+resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 200, 40, font, ["1360x768", "1920x1080"])
 
 # load spectravia logo
 game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
@@ -88,6 +92,7 @@ def draw_text(text, font, text_col, x, y):
 
 def gameLoop():
     global screen, fullscreen
+    prevOption = None
     run = True
     n = Network()
     clock = pygame.time.Clock()
@@ -128,21 +133,18 @@ def gameLoop():
                 rect2 = pygame.Rect((460, 340, 800, 300))
                 
                 pygame.draw.rect(screen, (255, 128, 55, 128), rect1)
-
                 pygame.draw.rect(screen, (255, 128, 55, 128), rect2)
 
                 if back_btn.draw(screen):
                     menuState = "main"
             case "settings":
                 draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
-
-                fullscreenCheckbox.draw(screen)
-                resDropdownMenu.draw(screen)
-
-                fullscreenCheckbox.checked = fullscreen
-                
                 screen.blit(game_logo, (20*CELL_WIDTH, 3*CELL_HEIGHT))
                 screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
+                
+                fullscreenCheckbox.draw(screen)
+                resDropdownMenu.draw(screen)
+                fullscreenCheckbox.checked = fullscreen
                 
                 if back_btn.draw(screen):
                     menuState = "main"
@@ -161,4 +163,11 @@ def gameLoop():
                 fullscreen = fullscreenCheckbox.checked
                 screen = refreshWindow(fullscreen)
 
+            if resDropdownMenu.selected_option != prevOption:
+                if resDropdownMenu.selected_option == resDropdownMenu.options[0]:
+                    fullscreen = False
+                    SCREEN_WIDTH = 1360
+                    SCREEN_HEIGHT = 768
+                    screen = refreshWindow(fullscreen)
+                prevOption = resDropdownMenu.selected_option
         pygame.display.flip() 
