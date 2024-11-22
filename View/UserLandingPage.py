@@ -6,6 +6,7 @@ from Model.Network import Network
 from Model.Player import Player
 from View.Button import Button
 from View.Checkbox import Checkbox
+from View.DropdownMenu import DropdownMenu
 from View.LineEdit import LineEdit
 
 pygame.init()
@@ -23,7 +24,6 @@ CELL_WIDTH = SCREEN_WIDTH/GRID_WIDTH
 CELL_HEIGHT = SCREEN_HEIGHT/GRID_HEIGHT
 
 fullscreen = True
-
 
 # game window
 def refreshWindow(fullscreen):
@@ -63,6 +63,9 @@ nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT)
 
 # load fullscreen Checkbox
 fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
+
+# load resolution dropdown menu
+resDropdownMenu = DropdownMenu(CELL_WIDTH, 4*CELL_HEIGHT, 30)
 
 # load spectravia logo
 game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
@@ -134,6 +137,7 @@ def gameLoop():
                 draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
 
                 fullscreenCheckbox.draw(screen)
+                resDropdownMenu.draw(screen)
 
                 fullscreenCheckbox.checked = fullscreen
                 
