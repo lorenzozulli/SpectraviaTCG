@@ -65,7 +65,7 @@ nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT)
 fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
 
 # load resolution dropdown menu
-resDropdownMenu = DropdownMenu(CELL_WIDTH, 4*CELL_HEIGHT, 30)
+resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 200, 40, font, ["1366x768", "1920x1080"])
 
 # load spectravia logo
 game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
@@ -155,6 +155,7 @@ def gameLoop():
 
             nameEdit.handle_event(event)
             fullscreenCheckbox.handle_event(event)
+            resDropdownMenu.handle_event(event)
 
             if fullscreen != fullscreenCheckbox.checked:
                 fullscreen = fullscreenCheckbox.checked
