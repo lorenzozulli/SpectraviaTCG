@@ -24,12 +24,15 @@ CELL_HEIGHT = SCREEN_HEIGHT/GRID_HEIGHT
 
 fullscreen = True
 
-# game window
-if fullscreen:
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
-else:
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 
+# game window
+def refreshWindow(fullscreen):
+    if fullscreen:
+        return pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
+    else:
+        return pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+screen = refreshWindow(fullscreen)
 
 pygame.display.set_caption("SPECTRAVIA TCG SIM")
 # Quando avro' un icona: pygame.display.set_icon("")
@@ -81,6 +84,7 @@ def draw_text(text, font, text_col, x, y):
     screen.blit(img, (x,y))
 
 def gameLoop():
+    global screen, fullscreen
     run = True
     n = Network()
     clock = pygame.time.Clock()
@@ -131,6 +135,8 @@ def gameLoop():
 
                 fullscreenCheckbox.draw(screen)
 
+                fullscreenCheckbox.checked = fullscreen
+                
                 screen.blit(game_logo, (20*CELL_WIDTH, 3*CELL_HEIGHT))
                 screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
                 
@@ -146,5 +152,8 @@ def gameLoop():
             nameEdit.handle_event(event)
             fullscreenCheckbox.handle_event(event)
 
-        pygame.display.update() 
-                
+            if fullscreen != fullscreenCheckbox.checked:
+                fullscreen = fullscreenCheckbox.checked
+                screen = refreshWindow(fullscreen)
+
+        pygame.display.flip() 
