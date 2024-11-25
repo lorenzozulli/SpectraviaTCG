@@ -1,8 +1,9 @@
+### -------------------------------------------- ###
 import pygame
 import time
+### -------------------------------------------- ###
 
-#button class
-class Button():
+class Button(object):
 	def __init__(self, x, y, image, scale):
 		width = image.get_width()
 		height = image.get_height()

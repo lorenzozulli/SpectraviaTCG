@@ -3,12 +3,12 @@ import pygame
 import random
 import os
 
-from Model.Network import Network
-from Model.Player import Player
-from View.Button import Button
-from View.Checkbox import Checkbox
-from View.DropdownMenu import DropdownMenu
-from View.LineEdit import LineEdit
+from src.model.Network import Network
+from src.model.Player import Player
+from src.view.Button import Button
+from src.view.Checkbox import Checkbox
+from src.view.DropdownMenu import DropdownMenu
+from src.view.LineEdit import LineEdit
 ### -------------------------------------------- ###
 
 pygame.init()
@@ -42,7 +42,7 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     # Quando avro' un icona: pygame.display.set_icon("")
 
     # BG image load and scale
-    bg_image = pygame.image.load("Assets/background.jpg")
+    bg_image = pygame.image.load("assets/graphics/GUI/background.jpg")
     bg_image = pygame.transform.scale(bg_image, (32*CELL_WIDTH, 18*CELL_HEIGHT))
 
     # define fonts
@@ -52,11 +52,11 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     TEXT_COL = (255,255,255)
 
     # load buttons
-    multiplayer_img = pygame.image.load("Assets/Other/Buttons/multiplayer.png").convert_alpha()
-    deckEditor_img = pygame.image.load("Assets/Other/Buttons/deck_editor.png").convert_alpha()
-    settings_img = pygame.image.load("Assets/Other/Buttons/settings.png").convert_alpha()
-    back_img = pygame.image.load("Assets/Other/Buttons/back.png").convert_alpha()
-    quit_img = pygame.image.load("Assets/Other/Buttons/quit.png").convert_alpha()
+    multiplayer_img = pygame.image.load("assets/graphics/GUI/Buttons/multiplayer.png").convert_alpha()
+    deckEditor_img = pygame.image.load("assets/graphics/GUI/Buttons/deck_editor.png").convert_alpha()
+    settings_img = pygame.image.load("assets/graphics/GUI/Buttons/settings.png").convert_alpha()
+    back_img = pygame.image.load("assets/graphics/GUI/Buttons/back.png").convert_alpha()
+    quit_img = pygame.image.load("assets/graphics/GUI/Buttons/quit.png").convert_alpha()
 
     multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, multiplayer_img, 1)
     deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, deckEditor_img, 1)
@@ -75,7 +75,7 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
 
 
     # load spectravia logo
-    game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
+    game_title = pygame.image.load("assets/graphics/GUI/spectravia_title.png")
 
     # Return all assets in a dictionary
     return {
@@ -90,16 +90,21 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
         "nameEdit": nameEdit,
         "fullscreenCheckbox": fullscreenCheckbox,
         "resDropdownMenu": resDropdownMenu,
-        "game_logo": game_logo
+        "game_title": game_title
     }
 
 clientNumber = 0
 
+def loadCharacter():
+    character_img = pygame.image.load("assets/graphics/GUI/Characters/character_" + str(r) + ".jpg")
+    character_img = pygame.transform.scale(character_img, (10*CELL_WIDTH, 10*CELL_WIDTH))
+    return character_img
+
 def randomizeCharacter():
-    folder = "Assets/Other/Characters"
+    folder = "assets/graphics/GUI/Characters"
     fileNumber = len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
     r = random.randint(1, fileNumber)
-    character_img = pygame.image.load("Assets/Other/Characters/character_" + str(r) + ".jpg")
+    character_img = pygame.image.load("assets/graphics/GUI/Characters/character_" + str(r) + ".jpg")
     character_img = pygame.transform.scale(character_img, (10*CELL_WIDTH, 10*CELL_WIDTH))
     return character_img
 
@@ -124,7 +129,7 @@ def gameLoop():
     nameEdit = assets["nameEdit"]
     fullscreenCheckbox = assets["fullscreenCheckbox"]
     resDropdownMenu = assets["resDropdownMenu"]
-    game_logo = assets["game_logo"]
+    game_title = assets["game_title"]
 
     global screen, fullscreen
     prevOption = None
@@ -147,7 +152,7 @@ def gameLoop():
                 elif settings_btn.draw(screen):
                     menuState = "settings"
                 
-                screen.blit(game_logo, (20*CELL_WIDTH, 3*CELL_HEIGHT))
+                screen.blit(game_title, (20*CELL_WIDTH, 3*CELL_HEIGHT))
                 screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
 
                 nameEdit.update()
@@ -174,7 +179,7 @@ def gameLoop():
                     menuState = "main"
             case "settings":
                 draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
-                screen.blit(game_logo, (20*CELL_WIDTH, 3*CELL_HEIGHT))
+                screen.blit(game_title, (20*CELL_WIDTH, 3*CELL_HEIGHT))
                 screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
                 
                 fullscreenCheckbox.draw(screen)
@@ -217,7 +222,7 @@ def gameLoop():
                     nameEdit = assets["nameEdit"]
                     fullscreenCheckbox = assets["fullscreenCheckbox"]
                     resDropdownMenu = assets["resDropdownMenu"]
-                    game_logo = assets["game_logo"]
+                    game_title = assets["game_title"]
                 elif resDropdownMenu.selected_option == resDropdownMenu.options[1]:
                     fullscreen = False
                     new_w = 1920
@@ -235,7 +240,7 @@ def gameLoop():
                     nameEdit = assets["nameEdit"]
                     fullscreenCheckbox = assets["fullscreenCheckbox"]
                     resDropdownMenu = assets["resDropdownMenu"]
-                    game_logo = assets["game_logo"]
+                    game_title = assets["game_title"]
                     
                 prevOption = resDropdownMenu.selected_option
         pygame.display.flip()

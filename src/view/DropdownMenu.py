@@ -1,5 +1,7 @@
+### -------------------------------------------- ###
 import pygame
 import sys
+### -------------------------------------------- ###
 
 class DropdownMenu:
     WHITE = (255, 255, 255)
@@ -35,13 +37,14 @@ class DropdownMenu:
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = event.pos
-            if self.rect.collidepoint(pos):
-                # Toggle del menu a tendina
-                self.is_open = not self.is_open
-            elif self.is_open:
-                for idx, rect in enumerate(self.option_rects):
-                    if rect.collidepoint(pos):
-                        self.selected_option = self.options[idx]
-                        self.is_open = False
-                        break
+            if event.button == 1:  # Sinistro del mouse
+                pos = event.pos
+                if self.rect.collidepoint(pos):
+                    # Toggle del menu a tendina
+                    self.is_open = not self.is_open
+                elif self.is_open:
+                    for idx, rect in enumerate(self.option_rects):
+                        if rect.collidepoint(pos):
+                            self.selected_option = self.options[idx]
+                            self.is_open = False
+                            break

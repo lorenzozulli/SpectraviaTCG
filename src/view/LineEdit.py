@@ -1,5 +1,8 @@
+### -------------------------------------------- ###
 import pygame
-from Model.Player import Player
+
+from src.model.Player import Player
+### -------------------------------------------- ###
 
 class LineEdit(object):
     def __init__(self, x, y, width, height, font_size=30, text_color=(0, 0, 0), bg_color=(255, 255, 255)):
@@ -14,11 +17,12 @@ class LineEdit(object):
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            # Attiva/Disattiva l'input in base al click del mouse
-            if self.rect.collidepoint(event.pos):
-                self.active = True
-            else:
-                self.active = False
+            if event.button == 1:  # Sinistro del mouse
+                # Attiva/Disattiva l'input in base al click del mouse
+                if self.rect.collidepoint(event.pos):
+                    self.active = True
+                else:
+                    self.active = False
 
         if event.type == pygame.KEYDOWN and self.active:
             # Gestione input tastiera

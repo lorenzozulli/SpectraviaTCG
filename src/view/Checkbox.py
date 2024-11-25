@@ -1,6 +1,8 @@
+### -------------------------------------------- ###
 import pygame
+### -------------------------------------------- ###
 
-class Checkbox:
+class Checkbox():
     def __init__(self, x, y, size, text, font_size=30, text_color=(0,0,0),color=(255,255,255), checked_color=(0,255,0)):
         self.rect = pygame.Rect(x, y, size, size)
         self.color = color

@@ -1,5 +1,8 @@
+### -------------------------------------------- ###
 import pygame
-from View.UserLandingPage import *
+
+from src.view.UserLandingPage import *
+### -------------------------------------------- ###
 
 if __name__ == "__main__":
     gameLoop()
