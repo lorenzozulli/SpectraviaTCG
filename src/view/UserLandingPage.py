@@ -95,7 +95,7 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
 
 clientNumber = 0
 
-def randomizeCharacter():
+def randomizeCharacter(CELL_WIDTH, CELL_HEIGHT):
     folder = "assets/graphics/GUI/Characters"
     fileNumber = len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
     r = random.randint(1, fileNumber)
@@ -103,7 +103,7 @@ def randomizeCharacter():
     character_img = pygame.transform.scale(character_img, (10*CELL_WIDTH, 10*CELL_WIDTH))
     return character_img
 
-character = randomizeCharacter()
+character = randomizeCharacter(CELL_WIDTH, CELL_HEIGHT)
 
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -126,7 +126,7 @@ def gameLoop():
     resDropdownMenu = assets["resDropdownMenu"]
     game_title = assets["game_title"]
 
-    global screen, fullscreen
+    global screen, fullscreen, character
     prevOption = None
     run = True
     n = Network()
@@ -214,6 +214,7 @@ def gameLoop():
 
                 screen = refreshWindow(fullscreen, new_w, new_h)
                 assets = loadAssets(new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
+                character = randomizeCharacter (new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
                 bg_image = assets["bg_image"]
                 font = assets["font"]
                 TEXT_COL = assets["TEXT_COL"]
