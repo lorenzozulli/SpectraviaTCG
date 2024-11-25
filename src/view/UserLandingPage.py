@@ -132,6 +132,9 @@ def gameLoop():
     n = Network()
     clock = pygame.time.Clock()
     menuState = "main"
+
+    new_w = info.current_w
+    new_h = info.current_h
     while run:
         clock.tick(60)
 
@@ -204,38 +207,25 @@ def gameLoop():
                     fullscreen = False
                     new_w = 1360
                     new_h = 768
-                    screen = refreshWindow(fullscreen, new_w, new_h)
-                    assets = loadAssets(new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
-                    bg_image = assets["bg_image"]
-                    font = assets["font"]
-                    TEXT_COL = assets["TEXT_COL"]
-                    multiplayer_btn = assets["multiplayer_btn"]
-                    deckEditor_btn = assets["deckEditor_btn"]
-                    settings_btn = assets["settings_btn"]
-                    back_btn = assets["back_btn"]
-                    quit_btn = assets["quit_btn"]
-                    nameEdit = assets["nameEdit"]
-                    fullscreenCheckbox = assets["fullscreenCheckbox"]
-                    resDropdownMenu = assets["resDropdownMenu"]
-                    game_title = assets["game_title"]
                 elif resDropdownMenu.selected_option == resDropdownMenu.options[1]:
                     fullscreen = False
                     new_w = 1920
                     new_h = 1080
-                    screen = refreshWindow(fullscreen, new_w, new_h)
-                    assets = loadAssets(new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
-                    bg_image = assets["bg_image"]
-                    font = assets["font"]
-                    TEXT_COL = assets["TEXT_COL"]
-                    multiplayer_btn = assets["multiplayer_btn"]
-                    deckEditor_btn = assets["deckEditor_btn"]
-                    settings_btn = assets["settings_btn"]
-                    back_btn = assets["back_btn"]
-                    quit_btn = assets["quit_btn"]
-                    nameEdit = assets["nameEdit"]
-                    fullscreenCheckbox = assets["fullscreenCheckbox"]
-                    resDropdownMenu = assets["resDropdownMenu"]
-                    game_title = assets["game_title"]
+
+                screen = refreshWindow(fullscreen, new_w, new_h)
+                assets = loadAssets(new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
+                bg_image = assets["bg_image"]
+                font = assets["font"]
+                TEXT_COL = assets["TEXT_COL"]
+                multiplayer_btn = assets["multiplayer_btn"]
+                deckEditor_btn = assets["deckEditor_btn"]
+                settings_btn = assets["settings_btn"]
+                back_btn = assets["back_btn"]
+                quit_btn = assets["quit_btn"]
+                nameEdit = assets["nameEdit"]
+                fullscreenCheckbox = assets["fullscreenCheckbox"]
+                resDropdownMenu = assets["resDropdownMenu"]
+                game_title = assets["game_title"]
                     
                 prevOption = resDropdownMenu.selected_option
         pygame.display.flip()
