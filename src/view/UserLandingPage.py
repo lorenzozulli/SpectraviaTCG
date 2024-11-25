@@ -73,7 +73,6 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     # Load resolution dropdown menu
     resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 5*CELL_WIDTH, int(CELL_HEIGHT.__round__(0)), font, ["1360x768", "1920x1080"])
 
-
     # load spectravia logo
     game_title = pygame.image.load("assets/graphics/GUI/spectravia_title.png")
 
