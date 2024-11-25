@@ -1,3 +1,4 @@
+### -------------------------------------------- ###
 import pygame
 import random
 import os
@@ -8,6 +9,7 @@ from View.Button import Button
 from View.Checkbox import Checkbox
 from View.DropdownMenu import DropdownMenu
 from View.LineEdit import LineEdit
+### -------------------------------------------- ###
 
 pygame.init()
 
@@ -26,53 +28,70 @@ CELL_HEIGHT = SCREEN_HEIGHT/GRID_HEIGHT
 fullscreen = True
 
 # game window
-def refreshWindow(fullscreen):
+def refreshWindow(fullscreen, SCREEN_WIDTH, SCREEN_HEIGHT):
     if fullscreen:
         return pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
     else:
         return pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-screen = refreshWindow(fullscreen)
+screen = refreshWindow(fullscreen, SCREEN_WIDTH, SCREEN_HEIGHT)
+
+def loadAssets(CELL_WIDTH, CELL_HEIGHT):
+    # Caption and game icon
+    pygame.display.set_caption("SPECTRAVIA TCG SIM")
+    # Quando avro' un icona: pygame.display.set_icon("")
+
+    # BG image load and scale
+    bg_image = pygame.image.load("Assets/background.jpg")
+    bg_image = pygame.transform.scale(bg_image, (32*CELL_WIDTH, 18*CELL_HEIGHT))
+
+    # define fonts
+    font = pygame.font.SysFont("arialblack", 40)
+
+    # define colors
+    TEXT_COL = (255,255,255)
+
+    # load buttons
+    multiplayer_img = pygame.image.load("Assets/Other/Buttons/multiplayer.png").convert_alpha()
+    deckEditor_img = pygame.image.load("Assets/Other/Buttons/deck_editor.png").convert_alpha()
+    settings_img = pygame.image.load("Assets/Other/Buttons/settings.png").convert_alpha()
+    back_img = pygame.image.load("Assets/Other/Buttons/back.png").convert_alpha()
+    quit_img = pygame.image.load("Assets/Other/Buttons/quit.png").convert_alpha()
+
+    multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, multiplayer_img, 1)
+    deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, deckEditor_img, 1)
+    settings_btn = Button(CELL_WIDTH, 8*CELL_HEIGHT, settings_img, 1)
+    back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, back_img, 1)
+    quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
+
+    # load lineEdit
+    nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT, int(CELL_HEIGHT.__round__(0)))
+
+    # load fullscreen Checkbox
+    fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
+
+    # Load resolution dropdown menu
+    resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 5*CELL_WIDTH, int(CELL_HEIGHT.__round__(0)), font, ["1360x768", "1920x1080"])
 
 
-# Caption and game icon
-pygame.display.set_caption("SPECTRAVIA TCG SIM")
-# Quando avro' un icona: pygame.display.set_icon("")
+    # load spectravia logo
+    game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
 
-# BG image load and scale
-bg_image = pygame.image.load("Assets/background.jpg")
-bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-
-# define fonts
-font = pygame.font.SysFont("arialblack", 40)
-
-# define colors
-TEXT_COL = (255,255,255)
-
-# load buttons
-multiplayer_img = pygame.image.load("Assets/Other/Buttons/multiplayer.png").convert_alpha()
-deckEditor_img = pygame.image.load("Assets/Other/Buttons/deck_editor.png").convert_alpha()
-settings_img = pygame.image.load("Assets/Other/Buttons/settings.png").convert_alpha()
-back_img = pygame.image.load("Assets/Other/Buttons/back.png").convert_alpha()
-quit_img = pygame.image.load("Assets/Other/Buttons/quit.png").convert_alpha()
-
-multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, multiplayer_img, 1)
-deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, deckEditor_img, 1)
-settings_btn = Button(CELL_WIDTH, 8*CELL_HEIGHT, settings_img, 1)
-back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, back_img, 1)
-quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
-
-# load lineEdit
-nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT, 48)
-
-# load fullscreen Checkbox
-fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
-
-# load resolution dropdown menu
-resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 200, 40, font, ["1360x768", "1920x1080"])
-
-# load spectravia logo
-game_logo = pygame.image.load("Assets/Other/spectravia_title.png")
+    # Return all assets in a dictionary
+    return {
+        "bg_image": bg_image,
+        "font": font,
+        "TEXT_COL": TEXT_COL,
+        "multiplayer_btn": multiplayer_btn,
+        "deckEditor_btn": deckEditor_btn,
+        "settings_btn": settings_btn,
+        "back_btn": back_btn,
+        "quit_btn": quit_btn,
+        "nameEdit": nameEdit,
+        "fullscreenCheckbox": fullscreenCheckbox,
+        "resDropdownMenu": resDropdownMenu,
+        "game_logo": game_logo
+    }
 
 clientNumber = 0
 
@@ -91,6 +110,22 @@ def draw_text(text, font, text_col, x, y):
     screen.blit(img, (x,y))
 
 def gameLoop():
+
+    assets = loadAssets(CELL_WIDTH, CELL_HEIGHT)
+
+    bg_image = assets["bg_image"]
+    font = assets["font"]
+    TEXT_COL = assets["TEXT_COL"]
+    multiplayer_btn = assets["multiplayer_btn"]
+    deckEditor_btn = assets["deckEditor_btn"]
+    settings_btn = assets["settings_btn"]
+    back_btn = assets["back_btn"]
+    quit_btn = assets["quit_btn"]
+    nameEdit = assets["nameEdit"]
+    fullscreenCheckbox = assets["fullscreenCheckbox"]
+    resDropdownMenu = assets["resDropdownMenu"]
+    game_logo = assets["game_logo"]
+
     global screen, fullscreen
     prevOption = None
     run = True
@@ -161,13 +196,46 @@ def gameLoop():
 
             if fullscreen != fullscreenCheckbox.checked:
                 fullscreen = fullscreenCheckbox.checked
-                screen = refreshWindow(fullscreen)
+                screen = refreshWindow(fullscreen, SCREEN_WIDTH, SCREEN_HEIGHT)
+                assets = loadAssets(SCREEN_WIDTH/GRID_WIDTH, SCREEN_HEIGHT/GRID_HEIGHT)
 
             if resDropdownMenu.selected_option != prevOption:
                 if resDropdownMenu.selected_option == resDropdownMenu.options[0]:
                     fullscreen = False
-                    SCREEN_WIDTH = 1360
-                    SCREEN_HEIGHT = 768
-                    screen = refreshWindow(fullscreen)
+                    new_w = 1360
+                    new_h = 768
+                    screen = refreshWindow(fullscreen, new_w, new_h)
+                    assets = loadAssets(new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
+                    bg_image = assets["bg_image"]
+                    font = assets["font"]
+                    TEXT_COL = assets["TEXT_COL"]
+                    multiplayer_btn = assets["multiplayer_btn"]
+                    deckEditor_btn = assets["deckEditor_btn"]
+                    settings_btn = assets["settings_btn"]
+                    back_btn = assets["back_btn"]
+                    quit_btn = assets["quit_btn"]
+                    nameEdit = assets["nameEdit"]
+                    fullscreenCheckbox = assets["fullscreenCheckbox"]
+                    resDropdownMenu = assets["resDropdownMenu"]
+                    game_logo = assets["game_logo"]
+                elif resDropdownMenu.selected_option == resDropdownMenu.options[1]:
+                    fullscreen = False
+                    new_w = 1920
+                    new_h = 1080
+                    screen = refreshWindow(fullscreen, new_w, new_h)
+                    assets = loadAssets(new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
+                    bg_image = assets["bg_image"]
+                    font = assets["font"]
+                    TEXT_COL = assets["TEXT_COL"]
+                    multiplayer_btn = assets["multiplayer_btn"]
+                    deckEditor_btn = assets["deckEditor_btn"]
+                    settings_btn = assets["settings_btn"]
+                    back_btn = assets["back_btn"]
+                    quit_btn = assets["quit_btn"]
+                    nameEdit = assets["nameEdit"]
+                    fullscreenCheckbox = assets["fullscreenCheckbox"]
+                    resDropdownMenu = assets["resDropdownMenu"]
+                    game_logo = assets["game_logo"]
+                    
                 prevOption = resDropdownMenu.selected_option
-        pygame.display.flip() 
+        pygame.display.flip()
