@@ -5,10 +5,10 @@ import os
 
 from src.model.Network import Network
 from src.model.Player import Player
-from src.view.Button import Button
-from src.view.Checkbox import Checkbox
-from src.view.DropdownMenu import DropdownMenu
-from src.view.LineEdit import LineEdit
+from src.model.Button import Button
+from src.model.Checkbox import Checkbox
+from src.model.DropdownMenu import DropdownMenu
+from src.model.LineEdit import LineEdit
 ### -------------------------------------------- ###
 
 pygame.init()
@@ -94,11 +94,6 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     }
 
 clientNumber = 0
-
-def loadCharacter():
-    character_img = pygame.image.load("assets/graphics/GUI/Characters/character_" + str(r) + ".jpg")
-    character_img = pygame.transform.scale(character_img, (10*CELL_WIDTH, 10*CELL_WIDTH))
-    return character_img
 
 def randomizeCharacter():
     folder = "assets/graphics/GUI/Characters"
