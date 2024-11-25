@@ -3,6 +3,8 @@ import pygame
 import random
 import os
 
+from pypdf import PdfReader
+
 from src.model.Network import Network
 from src.model.Player import Player
 from src.model.Button import Button
@@ -64,6 +66,8 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, back_img, 1)
     quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
 
+    downloadRules_btn = Button(CELL_WIDTH, 7*CELL_HEIGHT, multiplayer_img, 1)
+
     # load lineEdit
     nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT, int(CELL_HEIGHT.__round__(0)))
 
@@ -86,6 +90,7 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
         "settings_btn": settings_btn,
         "back_btn": back_btn,
         "quit_btn": quit_btn,
+        "downloadRules_btn": downloadRules_btn,
         "nameEdit": nameEdit,
         "fullscreenCheckbox": fullscreenCheckbox,
         "resDropdownMenu": resDropdownMenu,
@@ -120,6 +125,7 @@ def gameLoop():
     settings_btn = assets["settings_btn"]
     back_btn = assets["back_btn"]
     quit_btn = assets["quit_btn"]
+    downloadRules_btn = assets["downloadRules_btn"]
     nameEdit = assets["nameEdit"]
     fullscreenCheckbox = assets["fullscreenCheckbox"]
     resDropdownMenu = assets["resDropdownMenu"]
@@ -166,11 +172,11 @@ def gameLoop():
             case "deckEditor":
                 draw_text("deck editor", font, TEXT_COL, 160, 250)
 
-                rect1 = pygame.Rect((460, 20, 800, 300))
-                rect2 = pygame.Rect((460, 340, 800, 300))
+                yourDeck = pygame.Rect((460, 20, 800, 300))
+                cardsList = pygame.Rect((460, 340, 800, 300))
                 
-                pygame.draw.rect(screen, (255, 128, 55, 128), rect1)
-                pygame.draw.rect(screen, (255, 128, 55, 128), rect2)
+                pygame.draw.rect(screen, (255, 128, 55, 128), yourDeck)
+                pygame.draw.rect(screen, (255, 128, 55, 128), cardsList)
 
                 if back_btn.draw(screen):
                     menuState = "main"
@@ -180,8 +186,16 @@ def gameLoop():
                 screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
                 
                 fullscreenCheckbox.draw(screen)
-                resDropdownMenu.draw(screen)
                 fullscreenCheckbox.checked = fullscreen
+
+                resDropdownMenu.draw(screen)
+
+                if downloadRules_btn.draw(screen):
+                    reader = PdfReader("assets/rules.pdf")
+                    number_of_pages = len(reader.pages)
+                    page = reader.pages[0]
+                    text = page.extract_text()
+                    print(text)
                 
                 if back_btn.draw(screen):
                     menuState = "main"
@@ -222,6 +236,7 @@ def gameLoop():
                 settings_btn = assets["settings_btn"]
                 back_btn = assets["back_btn"]
                 quit_btn = assets["quit_btn"]
+                downloadRules_btn = assets["downloadRules_btn"]
                 nameEdit = assets["nameEdit"]
                 fullscreenCheckbox = assets["fullscreenCheckbox"]
                 resDropdownMenu = assets["resDropdownMenu"]
