@@ -5,4 +5,6 @@ class PdfManager(object):
         reader = PdfReader(filename)
         print(f'Number of Pages: {len(reader.pages)}')
         for page in range(len(reader.pages)):
-            print(reader.pages[page].extract_text())
+            text = reader.pages[page].extract_text()
+        
+        return text

@@ -190,8 +190,8 @@ def gameLoop():
                 resDropdownMenu.draw(screen)
 
                 if downloadRules_btn.draw(screen):
-                    pd = PdfManager()
-                    pd.parsePdf("data/rules.pdf")
+                    rules = PdfManager()
+                    draw_text(rules.parsePdf("data/rules.pdf"), font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
 
                 if back_btn.draw(screen):
                     menuState = "main"
