@@ -3,8 +3,7 @@ import pygame
 import random
 import os
 
-from pypdf import PdfReader
-
+from src.controller.PdfManager import PdfManager
 from src.model.Network import Network
 from src.model.Player import Player
 from src.model.Button import Button
@@ -191,12 +190,9 @@ def gameLoop():
                 resDropdownMenu.draw(screen)
 
                 if downloadRules_btn.draw(screen):
-                    reader = PdfReader("assets/rules.pdf")
-                    number_of_pages = len(reader.pages)
-                    page = reader.pages[0]
-                    text = page.extract_text()
-                    print(text)
-                
+                    pd = PdfManager()
+                    pd.parsePdf("data/rules.pdf")
+
                 if back_btn.draw(screen):
                     menuState = "main"
                 
