@@ -2,7 +2,6 @@
 import pygame
 import random
 import os
-
 from src.controller.PdfManager import PdfManager
 from src.model.Network import Network
 from src.model.Player import Player
@@ -12,239 +11,210 @@ from src.model.DropdownMenu import DropdownMenu
 from src.model.LineEdit import LineEdit
 ### -------------------------------------------- ###
 
-pygame.init()
-
-os.environ['SDL_VIDEO_CENTERED'] = '1'
-info = pygame.display.Info()
-
-SCREEN_WIDTH = info.current_w
-SCREEN_HEIGHT = info.current_h
-
+# Costanti globali
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 GRID_WIDTH = 32
 GRID_HEIGHT = 18
+FULLSCREEN_OPTIONS = ["1360x768", "1920x1080"]
 
-CELL_WIDTH = SCREEN_WIDTH/GRID_WIDTH
-CELL_HEIGHT = SCREEN_HEIGHT/GRID_HEIGHT
+class SpectraviaTCG:
+    def __init__(self):
+        pygame.init()
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+        self.info = pygame.display.Info()
+        
+        # Impostazioni dello schermo
+        self.fullscreen = True
+        self.screen_width = self.info.current_w
+        self.screen_height = self.info.current_h
+        self.cell_width = self.screen_width / GRID_WIDTH
+        self.cell_height = self.screen_height / GRID_HEIGHT
 
-fullscreen = True
+        self.screen = self.refresh_window()
+        self.assets = self.load_assets()
+        self.character = self.randomize_character()
 
-# game window
-def refreshWindow(fullscreen, SCREEN_WIDTH, SCREEN_HEIGHT):
-    if fullscreen:
-        return pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT),pygame.FULLSCREEN)
-    else:
-        return pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        # Stato del gioco
+        self.menu_state = "main"
+        self.prev_option = None
 
-screen = refreshWindow(fullscreen, SCREEN_WIDTH, SCREEN_HEIGHT)
+        # Oggetti di supporto
+        self.clock = pygame.time.Clock()
+        self.network = Network()
 
-def loadAssets(CELL_WIDTH, CELL_HEIGHT):
-    # Caption and game icon
-    pygame.display.set_caption("SPECTRAVIA TCG SIM")
-    # Quando avro' un icona: pygame.display.set_icon("")
+    def refresh_window(self):
+        """Aggiorna la finestra in base alla modalità fullscreen."""
+        flags = pygame.FULLSCREEN if self.fullscreen else 0
+        return pygame.display.set_mode((self.screen_width, self.screen_height), flags)
 
-    # BG image load and scale
-    bg_image = pygame.image.load("assets/graphics/GUI/background.jpg")
-    bg_image = pygame.transform.scale(bg_image, (32*CELL_WIDTH, 18*CELL_HEIGHT))
+    def load_assets(self):
+        """Carica tutti gli asset e li organizza in un dizionario."""
+        # Carica immagini
+        bg_image = pygame.image.load("assets/graphics/GUI/background.jpg")
+        bg_image = pygame.transform.scale(bg_image, (32 * self.cell_width, 18 * self.cell_height))
+        
+        game_title = pygame.image.load("assets/graphics/GUI/spectravia_title.png")
+        
+        # Font
+        arial_black = pygame.font.SysFont("arialblack", 40)
+        sora_typeface = pygame.font.Font("assets/fonts/Sora_Typeface/fonts_v2.1beta/Sora-Medium.ttf", 40)
+        
+        # Pulsanti
+        button_img = pygame.image.load("assets/graphics/GUI/Buttons/button.png").convert_alpha()
+        buttons = {
+            "multiplayer": Button(self.cell_width, 2 * self.cell_height, button_img, "MULTIPLAYER", WHITE, sora_typeface, 72, 1),
+            "deckEditor": Button(self.cell_width, 5 * self.cell_height, button_img, "DECK EDITOR", WHITE, sora_typeface, 72, 1),
+            "settings": Button(self.cell_width, 8 * self.cell_height, button_img, "SETTINGS", WHITE, sora_typeface, 72, 1),
+            "back": Button(self.cell_width, 12 * self.cell_height, button_img, "BACK", WHITE, sora_typeface, 72, 1),
+            "quit": Button(self.cell_width, 14 * self.cell_height, button_img, "QUIT", WHITE, sora_typeface, 72, 1),
+            "downloadRules": Button(self.cell_width, 7 * self.cell_height, button_img, "Download Rules", WHITE, sora_typeface, 72, 1)
+        }
+        
+        # Componenti interattivi
+        name_edit = LineEdit(self.cell_width, 12 * self.cell_height, 8 * self.cell_width, self.cell_height, int(self.cell_height))
+        fullscreen_checkbox = Checkbox(self.cell_width, 4 * self.cell_height, 30, "     Fullscreen")
+        res_dropdown_menu = DropdownMenu(self.cell_width, 5 * self.cell_height, 5 * self.cell_width, int(self.cell_height), arial_black, FULLSCREEN_OPTIONS)
+        
+        return {
+            "bg_image": bg_image,
+            "game_title": game_title,
+            "font": arial_black,
+            "sora_typeface": sora_typeface,
+            "buttons": buttons,
+            "name_edit": name_edit,
+            "fullscreen_checkbox": fullscreen_checkbox,
+            "res_dropdown_menu": res_dropdown_menu
+        }
 
-    # define fonts
-    arialBlack = pygame.font.SysFont("arialblack", 40)
-    soraTypeface = pygame.font.Font("assets/fonts/Sora_Typeface/fonts_v2.1beta/Sora-Medium.ttf", 40)
+    def randomize_character(self):
+        """Seleziona casualmente un personaggio."""
+        folder = "assets/graphics/GUI/Characters"
+        files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+        character_img = pygame.image.load(os.path.join(folder, random.choice(files)))
+        return pygame.transform.scale(character_img, (10 * self.cell_width, 10 * self.cell_height))
 
-    # define colors
-    WHITE = (255,255,255)
-    BLACK = (0,0,0)
+    def draw_text(self, text, font, color, x, y):
+        """Disegna testo sullo schermo."""
+        img = font.render(text, True, color)
+        self.screen.blit(img, (x, y))
 
-    # load buttons
-    multiplayer_img = pygame.image.load("assets/graphics/GUI/Buttons/multiplayer.png").convert_alpha()
-    deckEditor_img = pygame.image.load("assets/graphics/GUI/Buttons/deck_editor.png").convert_alpha()
-    settings_img = pygame.image.load("assets/graphics/GUI/Buttons/settings.png").convert_alpha()
-    back_img = pygame.image.load("assets/graphics/GUI/Buttons/back.png").convert_alpha()
-    quit_img = pygame.image.load("assets/graphics/GUI/Buttons/quit.png").convert_alpha()
-
-    button_img = pygame.image.load("assets/graphics/GUI/Buttons/button.png").convert_alpha()
-
-    multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, button_img, "MULTIPLAYER", WHITE, soraTypeface, 72, 1)
-    deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, button_img, "DECK EDITOR", WHITE, soraTypeface, 72, 1)
-    settings_btn = Button(CELL_WIDTH, 8*CELL_HEIGHT, button_img, "SETTINGS", WHITE, soraTypeface, 72, 1)
-    back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, button_img, "BACK", WHITE, soraTypeface, 72, 1)
-    quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, button_img, "QUIT", WHITE, soraTypeface, 72, 1)
-
-    downloadRules_btn = Button(CELL_WIDTH, 7*CELL_HEIGHT, button_img, "Download Rules", WHITE, soraTypeface, 72, 1)
-
-    # load lineEdit
-    nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT, int(CELL_HEIGHT.__round__(0)))
-
-    # load fullscreen Checkbox
-    fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
-
-    # Load resolution dropdown menu
-    resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 5*CELL_WIDTH, int(CELL_HEIGHT.__round__(0)), arialBlack, ["1360x768", "1920x1080"])
-
-    # load spectravia logo
-    game_title = pygame.image.load("assets/graphics/GUI/spectravia_title.png")
-
-    # Return all assets in a dictionary
-    return {
-        "bg_image": bg_image,
-        "font": arialBlack,
-        "soraTypeface": soraTypeface,
-        "WHITE": WHITE,
-        "multiplayer_btn": multiplayer_btn,
-        "deckEditor_btn": deckEditor_btn,
-        "settings_btn": settings_btn,
-        "back_btn": back_btn,
-        "quit_btn": quit_btn,
-        "downloadRules_btn": downloadRules_btn,
-        "nameEdit": nameEdit,
-        "fullscreenCheckbox": fullscreenCheckbox,
-        "resDropdownMenu": resDropdownMenu,
-        "game_title": game_title
-    }
-
-clientNumber = 0
-
-def randomizeCharacter(CELL_WIDTH, CELL_HEIGHT):
-    folder = "assets/graphics/GUI/Characters"
-    fileNumber = len([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))])
-    r = random.randint(1, fileNumber)
-    character_img = pygame.image.load("assets/graphics/GUI/Characters/character_" + str(r) + ".jpg")
-    character_img = pygame.transform.scale(character_img, (10*CELL_WIDTH, 10*CELL_WIDTH))
-    return character_img
-
-character = randomizeCharacter(CELL_WIDTH, CELL_HEIGHT)
-
-def draw_text(text, font, text_col, x, y):
-    img = font.render(text, True, text_col)
-    screen.blit(img, (x,y))
-
-def gameLoop():
-
-    assets = loadAssets(CELL_WIDTH, CELL_HEIGHT)
-
-    bg_image = assets["bg_image"]
-    font = assets["font"]
-    soraTypeface = assets["soraTypeface"]
-    WHITE = assets["WHITE"]
-    multiplayer_btn = assets["multiplayer_btn"]
-    deckEditor_btn = assets["deckEditor_btn"]
-    settings_btn = assets["settings_btn"]
-    back_btn = assets["back_btn"]
-    quit_btn = assets["quit_btn"]
-    downloadRules_btn = assets["downloadRules_btn"]
-    nameEdit = assets["nameEdit"]
-    fullscreenCheckbox = assets["fullscreenCheckbox"]
-    resDropdownMenu = assets["resDropdownMenu"]
-    game_title = assets["game_title"]
-
-    global screen, fullscreen, character
-    prevOption = None
-    run = True
-    n = Network()
-    clock = pygame.time.Clock()
-    menuState = "main"
-
-    new_w = 1360
-    new_h = 768
-
-    while run:
-        clock.tick(60)
-
-        screen.fill((0,0,0))
-        screen.blit(bg_image, (0,0))
-
-        match menuState:
-            case "main":
-                if multiplayer_btn.draw(screen):
-                    menuState = "multiplayer"
-                elif deckEditor_btn.draw(screen):
-                    menuState = "deckEditor"
-                elif settings_btn.draw(screen):
-                    menuState = "settings"
-                
-                screen.blit(game_title, (20*CELL_WIDTH, 3*CELL_HEIGHT))
-                screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
-
-                nameEdit.update()
-                nameEdit.draw(screen)
-
-                if quit_btn.draw(screen):
-                    run = False
-
-            case "multiplayer":
-                draw_text("multiplayer", soraTypeface,  WHITE, 160, 250)
-                if back_btn.draw(screen):
-                    menuState = "main"
-            case "deckEditor":
-                draw_text("deck editor", soraTypeface, WHITE, 160, 250)
-
-                yourDeck = pygame.Rect((460, 20, 800, 300))
-                cardsList = pygame.Rect((460, 340, 800, 300))
-                
-                pygame.draw.rect(screen, (255, 128, 55, 128), yourDeck)
-                pygame.draw.rect(screen, (255, 128, 55, 128), cardsList)
-
-                if back_btn.draw(screen):
-                    menuState = "main"
-            case "settings":
-                draw_text("SpectraviaTCG, made by Lorenzo Zulli", soraTypeface, WHITE, CELL_WIDTH, 3*CELL_HEIGHT)
-                screen.blit(game_title, (20*CELL_WIDTH, 3*CELL_HEIGHT))
-                screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
-                
-                fullscreenCheckbox.draw(screen)
-                fullscreenCheckbox.checked = fullscreen
-
-                resDropdownMenu.draw(screen)
-
-                if downloadRules_btn.draw(screen):
-                    rules = PdfManager()
-                    draw_text(rules.parsePdf("data/rules.pdf"), soraTypeface, WHITE, CELL_WIDTH, 3*CELL_HEIGHT)
-
-                if back_btn.draw(screen):
-                    menuState = "main"
-                
-        #event handler
+    def handle_events(self):
+        """Gestisce gli eventi globali."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
+                return False
+            self.assets["name_edit"].handle_event(event)
+            self.assets["fullscreen_checkbox"].handle_event(event)
+            self.assets["res_dropdown_menu"].handle_event(event)
 
-            nameEdit.handle_event(event)
-            fullscreenCheckbox.handle_event(event)
-            resDropdownMenu.handle_event(event)
+        # Cambia risoluzione
+        self.update_resolution()
 
-            if fullscreen != fullscreenCheckbox.checked:
-                fullscreen = fullscreenCheckbox.checked
-                info = pygame.display.Info()
-                screen = refreshWindow(fullscreen, SCREEN_WIDTH, SCREEN_HEIGHT)
-                assets = loadAssets(SCREEN_WIDTH/GRID_WIDTH, SCREEN_HEIGHT/GRID_HEIGHT)
+        return True
 
-            if resDropdownMenu.selected_option != prevOption:
-                if resDropdownMenu.selected_option == resDropdownMenu.options[0]:
-                    fullscreen = False
-                    new_w = 1360
-                    new_h = 768
-                elif resDropdownMenu.selected_option == resDropdownMenu.options[1]:
-                    fullscreen = False
-                    new_w = 1920
-                    new_h = 1080
+    def update_resolution(self):
+        """Aggiorna la risoluzione in base alle scelte utente."""
+        checkbox = self.assets["fullscreen_checkbox"]
+        dropdown = self.assets["res_dropdown_menu"]
+        
+        if self.fullscreen != checkbox.checked:
+            self.fullscreen = checkbox.checked
+            self.screen = self.refresh_window()
+        
+        if dropdown.selected_option != self.prev_option:
+            self.fullscreen = False
+            self.screen_width, self.screen_height = map(int, dropdown.selected_option.split("x"))
+            self.cell_width = self.screen_width / GRID_WIDTH
+            self.cell_height = self.screen_height / GRID_HEIGHT
+            self.screen = self.refresh_window()
+            self.assets = self.load_assets()
+            self.character = self.randomize_character()
+            self.prev_option = dropdown.selected_option
 
-                screen = refreshWindow(fullscreen, new_w, new_h)
-                assets = loadAssets(new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
-                character = randomizeCharacter (new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
-                bg_image = assets["bg_image"]
-                font = assets["font"]
-                soraTypeface = assets["soraTypeface"]
-                WHITE = assets["WHITE"]
-                multiplayer_btn = assets["multiplayer_btn"]
-                deckEditor_btn = assets["deckEditor_btn"]
-                settings_btn = assets["settings_btn"]
-                back_btn = assets["back_btn"]
-                quit_btn = assets["quit_btn"]
-                downloadRules_btn = assets["downloadRules_btn"]
-                nameEdit = assets["nameEdit"]
-                fullscreenCheckbox = assets["fullscreenCheckbox"]
-                resDropdownMenu = assets["resDropdownMenu"]
-                game_title = assets["game_title"]
-                    
-                prevOption = resDropdownMenu.selected_option
-        pygame.display.flip()
+    def draw_main_menu(self):
+        """Disegna il menu principale."""
+        self.screen.blit(self.assets["bg_image"], (0, 0))
+        self.screen.blit(self.assets["game_title"], (20 * self.cell_width, 3 * self.cell_height))
+        self.screen.blit(self.character, (20 * self.cell_width, 4 * self.cell_height))
+        self.assets["name_edit"].update()
+        self.assets["name_edit"].draw(self.screen)
+        
+        buttons = self.assets["buttons"]
+        if buttons["multiplayer"].draw(self.screen):
+            self.menu_state = "multiplayer"
+        elif buttons["deckEditor"].draw(self.screen):
+            self.menu_state = "deckEditor"
+        elif buttons["settings"].draw(self.screen):
+            self.menu_state = "settings"
+        elif buttons["quit"].draw(self.screen):
+            return False
+        
+        return True
+
+    def draw_multiplayer_menu(self):
+        """Disegna il menu multiplayer."""
+        self.screen.blit(self.assets["bg_image"], (0, 0))
+        self.draw_text("Multiplayer", self.assets["sora_typeface"], WHITE, self.cell_width, 3 * self.cell_height)
+
+        buttons = self.assets["buttons"]
+        if buttons["back"].draw(self.screen):
+            self.menu_state = "main"
+
+    def draw_deck_editor_menu(self):
+        """Disegna il menu editor dei mazzi."""
+        self.screen.blit(self.assets["bg_image"], (0, 0))
+        self.draw_text("Deck Editor", self.assets["sora_typeface"], WHITE, self.cell_width, 3 * self.cell_height)
+
+        # Disegna sezioni per le carte
+        your_deck = pygame.Rect((460, 20, 800, 300))
+        cards_list = pygame.Rect((460, 340, 800, 300))
+
+        pygame.draw.rect(self.screen, (255, 128, 55, 128), your_deck)
+        pygame.draw.rect(self.screen, (255, 128, 55, 128), cards_list)
+
+        buttons = self.assets["buttons"]
+        if buttons["back"].draw(self.screen):
+            self.menu_state = "main"
+
+    def draw_settings_menu(self):
+        """Disegna il menu impostazioni."""
+        self.screen.blit(self.assets["bg_image"], (0, 0))
+        self.draw_text("Settings", self.assets["sora_typeface"], WHITE, self.cell_width, 3 * self.cell_height)
+        self.screen.blit(self.assets["game_title"], (20 * self.cell_width, 3 * self.cell_height))
+        self.screen.blit(self.character, (20 * self.cell_width, 4 * self.cell_height))
+
+        # Disegna interattivi
+        checkbox = self.assets["fullscreen_checkbox"]
+        dropdown = self.assets["res_dropdown_menu"]
+        checkbox.draw(self.screen)
+        dropdown.draw(self.screen)
+
+        # Disegna pulsanti
+        buttons = self.assets["buttons"]
+        if buttons["downloadRules"].draw(self.screen):
+            rules = PdfManager()
+            rules_text = rules.parsePdf("data/rules.pdf")
+            self.draw_text(rules_text, self.assets["sora_typeface"], WHITE, self.cell_width, 6 * self.cell_height)
+
+        if buttons["back"].draw(self.screen):
+            self.menu_state = "main"
+
+    def run(self):
+        """Loop principale del gioco."""
+        running = True
+        while running:
+            self.clock.tick(60)
+            running = self.handle_events()
+
+            match self.menu_state:
+                case "main":
+                    running = self.draw_main_menu()
+                case "multiplayer":
+                    self.draw_multiplayer_menu()
+                case "deckEditor":
+                    self.draw_deck_editor_menu()
+                case "settings":
+                    self.draw_settings_menu()
+
+            pygame.display.flip()

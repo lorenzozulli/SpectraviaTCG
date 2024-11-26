@@ -8,12 +8,11 @@ class DropdownMenu:
     BLACK = (0, 0, 0)
     GRAY = (200, 200, 200)
 
-    def __init__(self, x, y, width, height, font, options, default_text="Seleziona"):
+    def __init__(self, x, y, width, height, font, options):
         self.rect = pygame.Rect(x, y, width, height)
         self.font = font
         self.options = options
-        self.default_text = default_text
-        self.selected_option = default_text
+        self.selected_option = options[0]
         self.is_open = False
         self.option_rects = []
 
