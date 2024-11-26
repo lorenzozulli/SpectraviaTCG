@@ -44,12 +44,10 @@ class SpectraviaTCG:
         self.network = Network()
 
     def refresh_window(self):
-        """Aggiorna la finestra in base alla modalità fullscreen."""
         flags = pygame.FULLSCREEN if self.fullscreen else 0
         return pygame.display.set_mode((self.screen_width, self.screen_height), flags)
 
     def load_assets(self):
-        """Carica tutti gli asset e li organizza in un dizionario."""
         # Carica immagini
         bg_image = pygame.image.load("assets/graphics/GUI/background.jpg")
         bg_image = pygame.transform.scale(bg_image, (32 * self.cell_width, 18 * self.cell_height))
@@ -88,19 +86,16 @@ class SpectraviaTCG:
         }
 
     def randomize_character(self):
-        """Seleziona casualmente un personaggio."""
         folder = "assets/graphics/GUI/Characters"
         files = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
         character_img = pygame.image.load(os.path.join(folder, random.choice(files)))
         return pygame.transform.scale(character_img, (10 * self.cell_width, 10 * self.cell_height))
 
     def draw_text(self, text, font, color, x, y):
-        """Disegna testo sullo schermo."""
         img = font.render(text, True, color)
         self.screen.blit(img, (x, y))
 
     def handle_events(self):
-        """Gestisce gli eventi globali."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -114,7 +109,6 @@ class SpectraviaTCG:
         return True
 
     def update_resolution(self):
-        """Aggiorna la risoluzione in base alle scelte utente."""
         checkbox = self.assets["fullscreen_checkbox"]
         dropdown = self.assets["res_dropdown_menu"]
         
@@ -133,7 +127,6 @@ class SpectraviaTCG:
             self.prev_option = dropdown.selected_option
 
     def draw_main_menu(self):
-        """Disegna il menu principale."""
         self.screen.blit(self.assets["bg_image"], (0, 0))
         self.screen.blit(self.assets["game_title"], (20 * self.cell_width, 3 * self.cell_height))
         self.screen.blit(self.character, (20 * self.cell_width, 4 * self.cell_height))
@@ -153,7 +146,6 @@ class SpectraviaTCG:
         return True
 
     def draw_multiplayer_menu(self):
-        """Disegna il menu multiplayer."""
         self.screen.blit(self.assets["bg_image"], (0, 0))
         self.draw_text("Multiplayer", self.assets["sora_typeface"], WHITE, self.cell_width, 3 * self.cell_height)
 
@@ -162,7 +154,6 @@ class SpectraviaTCG:
             self.menu_state = "main"
 
     def draw_deck_editor_menu(self):
-        """Disegna il menu editor dei mazzi."""
         self.screen.blit(self.assets["bg_image"], (0, 0))
         self.draw_text("Deck Editor", self.assets["sora_typeface"], WHITE, self.cell_width, 3 * self.cell_height)
 
@@ -178,7 +169,6 @@ class SpectraviaTCG:
             self.menu_state = "main"
 
     def draw_settings_menu(self):
-        """Disegna il menu impostazioni."""
         self.screen.blit(self.assets["bg_image"], (0, 0))
         self.draw_text("Settings", self.assets["sora_typeface"], WHITE, self.cell_width, 3 * self.cell_height)
         self.screen.blit(self.assets["game_title"], (20 * self.cell_width, 3 * self.cell_height))
@@ -201,7 +191,6 @@ class SpectraviaTCG:
             self.menu_state = "main"
 
     def run(self):
-        """Loop principale del gioco."""
         running = True
         while running:
             self.clock.tick(60)
