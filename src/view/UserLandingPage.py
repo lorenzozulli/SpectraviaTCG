@@ -47,10 +47,12 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     bg_image = pygame.transform.scale(bg_image, (32*CELL_WIDTH, 18*CELL_HEIGHT))
 
     # define fonts
-    font = pygame.font.SysFont("arialblack", 40)
+    arialBlack = pygame.font.SysFont("arialblack", 40)
+    soraTypeface = pygame.font.Font("assets/fonts/Sora_Typeface/fonts_v2.1beta/Sora-Medium.ttf", 40)
 
     # define colors
-    TEXT_COL = (255,255,255)
+    WHITE = (255,255,255)
+    BLACK = (0,0,0)
 
     # load buttons
     multiplayer_img = pygame.image.load("assets/graphics/GUI/Buttons/multiplayer.png").convert_alpha()
@@ -59,13 +61,15 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     back_img = pygame.image.load("assets/graphics/GUI/Buttons/back.png").convert_alpha()
     quit_img = pygame.image.load("assets/graphics/GUI/Buttons/quit.png").convert_alpha()
 
-    multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, multiplayer_img, 1)
-    deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, deckEditor_img, 1)
-    settings_btn = Button(CELL_WIDTH, 8*CELL_HEIGHT, settings_img, 1)
-    back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, back_img, 1)
-    quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, quit_img, 1)
+    button_img = pygame.image.load("assets/graphics/GUI/Buttons/button.png").convert_alpha()
 
-    downloadRules_btn = Button(CELL_WIDTH, 7*CELL_HEIGHT, multiplayer_img, 1)
+    multiplayer_btn = Button(CELL_WIDTH, 2*CELL_HEIGHT, button_img, "MULTIPLAYER", WHITE, soraTypeface, 72, 1)
+    deckEditor_btn = Button(CELL_WIDTH, 5*CELL_HEIGHT, button_img, "DECK EDITOR", WHITE, soraTypeface, 72, 1)
+    settings_btn = Button(CELL_WIDTH, 8*CELL_HEIGHT, button_img, "SETTINGS", WHITE, soraTypeface, 72, 1)
+    back_btn = Button(CELL_WIDTH, 12*CELL_HEIGHT, button_img, "BACK", WHITE, soraTypeface, 72, 1)
+    quit_btn = Button(CELL_WIDTH, 14*CELL_HEIGHT, button_img, "QUIT", WHITE, soraTypeface, 72, 1)
+
+    downloadRules_btn = Button(CELL_WIDTH, 7*CELL_HEIGHT, button_img, "Download Rules", WHITE, soraTypeface, 72, 1)
 
     # load lineEdit
     nameEdit = LineEdit(CELL_WIDTH, 12*CELL_HEIGHT, 8*CELL_WIDTH, CELL_HEIGHT, int(CELL_HEIGHT.__round__(0)))
@@ -74,7 +78,7 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     fullscreenCheckbox = Checkbox(CELL_WIDTH,4*CELL_HEIGHT,30, "     Fullscreen")
 
     # Load resolution dropdown menu
-    resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 5*CELL_WIDTH, int(CELL_HEIGHT.__round__(0)), font, ["1360x768", "1920x1080"])
+    resDropdownMenu = DropdownMenu(CELL_WIDTH, 5*CELL_HEIGHT, 5*CELL_WIDTH, int(CELL_HEIGHT.__round__(0)), arialBlack, ["1360x768", "1920x1080"])
 
     # load spectravia logo
     game_title = pygame.image.load("assets/graphics/GUI/spectravia_title.png")
@@ -82,8 +86,9 @@ def loadAssets(CELL_WIDTH, CELL_HEIGHT):
     # Return all assets in a dictionary
     return {
         "bg_image": bg_image,
-        "font": font,
-        "TEXT_COL": TEXT_COL,
+        "font": arialBlack,
+        "soraTypeface": soraTypeface,
+        "WHITE": WHITE,
         "multiplayer_btn": multiplayer_btn,
         "deckEditor_btn": deckEditor_btn,
         "settings_btn": settings_btn,
@@ -118,7 +123,8 @@ def gameLoop():
 
     bg_image = assets["bg_image"]
     font = assets["font"]
-    TEXT_COL = assets["TEXT_COL"]
+    soraTypeface = assets["soraTypeface"]
+    WHITE = assets["WHITE"]
     multiplayer_btn = assets["multiplayer_btn"]
     deckEditor_btn = assets["deckEditor_btn"]
     settings_btn = assets["settings_btn"]
@@ -137,8 +143,9 @@ def gameLoop():
     clock = pygame.time.Clock()
     menuState = "main"
 
-    new_w = info.current_w
-    new_h = info.current_h
+    new_w = 1360
+    new_h = 768
+
     while run:
         clock.tick(60)
 
@@ -164,12 +171,11 @@ def gameLoop():
                     run = False
 
             case "multiplayer":
-                draw_text("multiplayer", font, TEXT_COL, 160, 250)
-
+                draw_text("multiplayer", soraTypeface,  WHITE, 160, 250)
                 if back_btn.draw(screen):
                     menuState = "main"
             case "deckEditor":
-                draw_text("deck editor", font, TEXT_COL, 160, 250)
+                draw_text("deck editor", soraTypeface, WHITE, 160, 250)
 
                 yourDeck = pygame.Rect((460, 20, 800, 300))
                 cardsList = pygame.Rect((460, 340, 800, 300))
@@ -180,7 +186,7 @@ def gameLoop():
                 if back_btn.draw(screen):
                     menuState = "main"
             case "settings":
-                draw_text("SpectraviaTCG, made by Lorenzo Zulli", font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
+                draw_text("SpectraviaTCG, made by Lorenzo Zulli", soraTypeface, WHITE, CELL_WIDTH, 3*CELL_HEIGHT)
                 screen.blit(game_title, (20*CELL_WIDTH, 3*CELL_HEIGHT))
                 screen.blit(character, (20*CELL_WIDTH, 4*CELL_HEIGHT))
                 
@@ -191,7 +197,7 @@ def gameLoop():
 
                 if downloadRules_btn.draw(screen):
                     rules = PdfManager()
-                    draw_text(rules.parsePdf("data/rules.pdf"), font, TEXT_COL, CELL_WIDTH, 3*CELL_HEIGHT)
+                    draw_text(rules.parsePdf("data/rules.pdf"), soraTypeface, WHITE, CELL_WIDTH, 3*CELL_HEIGHT)
 
                 if back_btn.draw(screen):
                     menuState = "main"
@@ -208,6 +214,7 @@ def gameLoop():
 
             if fullscreen != fullscreenCheckbox.checked:
                 fullscreen = fullscreenCheckbox.checked
+                info = pygame.display.Info()
                 screen = refreshWindow(fullscreen, SCREEN_WIDTH, SCREEN_HEIGHT)
                 assets = loadAssets(SCREEN_WIDTH/GRID_WIDTH, SCREEN_HEIGHT/GRID_HEIGHT)
 
@@ -226,7 +233,8 @@ def gameLoop():
                 character = randomizeCharacter (new_w/GRID_WIDTH, new_h/GRID_HEIGHT)
                 bg_image = assets["bg_image"]
                 font = assets["font"]
-                TEXT_COL = assets["TEXT_COL"]
+                soraTypeface = assets["soraTypeface"]
+                WHITE = assets["WHITE"]
                 multiplayer_btn = assets["multiplayer_btn"]
                 deckEditor_btn = assets["deckEditor_btn"]
                 settings_btn = assets["settings_btn"]
